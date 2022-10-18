@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use PHPHtmlParser\Dom;
+use GuzzleHttp\Client;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,4 +17,66 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+
+
+
+/** @var \Laravel\Lumen\Routing\Router $router */
+
+/*
+|--------------------------------------------------------------------------
+| Application Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register all of the routes for an application.
+| It is a breeze. Simply tell Lumen the URIs it should respond to
+| and give it the Closure to call when that URI is requested.
+|
+*/
+
+function avr(array $data)
+{
+    asort($data);
+    array_pop($data);
+    array_pop($data);
+    array_shift($data);
+    array_shift($data);
+    return  array_sum($data) / count($data);
+}
+
+function getData($name)
+{
+    return Cache::remember($name, 6000, function () use ($name) {
+        $client = new Client([
+            // Base URI is used with relative requests
+            'base_uri' => 'https://fiis.com.br',
+            // You can set any number of default request options.
+            'timeout'  => 2.0,
+        ]);
+        $response = $client->request('GET', "/{$name}");
+        return (string) $response->getBody();
+    });
+}
+
+$router->get('/', function () use ($router) {
+    return 'ok';
+});
+
+$router->get('/{name}', function ($name) {
+    $body = getData($name);
+    $dom = new Dom;
+    $dom->loadStr($body);
+    $dividend = array_map(function ($i) {
+        $td = $i->find('td');
+        return (float) str_replace(['R$', ' ', ','], ['', '', '.'], $td[4]->text);
+    }, $dom->find('#last-revenues--table tbody tr')->toArray());
+
+    $last = $dividend[0];
+    $avr = avr($dividend);
+
+    $indexes = $dom->find('#informations--indexes td .value');
+    $vpc = (float) str_replace(',', '.', $indexes[3]->text);
+
+    return response()->json(compact('last', 'avr', 'vpc'));
 });
