@@ -59,6 +59,11 @@ function getData($name)
     });
 }
 
+function parseCurrency($text)
+{
+    return (float) str_replace(['R$', ' ', ','], ['', '', '.'], $text);
+}
+
 $router->get('/', function () use ($router) {
     return 'ok';
 });
@@ -74,14 +79,14 @@ $router->get('/{name}', function ($name) {
     $d = collect($xpath->query('//*[@id="last-revenues--table"]/tbody/tr'));
     $dividend = $d->map(function ($n){
         $list = $n->getElementsByTagName('td');
-        return (float) str_replace(['R$', ' ', ','], ['', '', '.'], $list->item(4)->nodeValue);
+        return parseCurrency($list->item(4)->nodeValue);
     });
 
     $last = $dividend[0];
     $avr = avr($dividend->toArray());
 
-    //$indexes = $dom->find('#informations--indexes td .value');
-    //$vpc = (float) str_replace(',', '.', $indexes[3]->text);
+    $indexes = $xpath->query('//*[@id="informations--indexes"]/td')->item(3)->getElementsByTagName('h3')->item(0);
+    $vpc = parseCurrency($indexes->textContent);
 
-    return response()->json(compact('last', 'avr'));
+    return response()->json(compact('last', 'avr', 'vpc'));
 });
