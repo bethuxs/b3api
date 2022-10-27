@@ -65,18 +65,23 @@ $router->get('/', function () use ($router) {
 
 $router->get('/{name}', function ($name) {
     $body = getData($name);
-    $dom = new Dom;
-    $dom->loadStr($body);
-    $dividend = array_map(function ($i) {
-        $td = $i->find('td');
-        return (float) str_replace(['R$', ' ', ','], ['', '', '.'], $td[4]->text);
-    }, $dom->find('#last-revenues--table tbody tr')->toArray());
+    $pageDom = new DomDocument();
+    $searchPage = mb_convert_encoding($body, 'HTML-ENTITIES', "UTF-8");
+    libxml_use_internal_errors(true);
+    $pageDom->loadHTML($searchPage, LIBXML_NOWARNING);
+
+    $xpath = new DOMXpath($pageDom);
+    $d = collect($xpath->query('//*[@id="last-revenues--table"]/tbody/tr'));
+    $dividend = $d->map(function ($n){
+        $list = $n->getElementsByTagName('td');
+        return (float) str_replace(['R$', ' ', ','], ['', '', '.'], $list->item(4)->nodeValue);
+    });
 
     $last = $dividend[0];
-    $avr = avr($dividend);
+    $avr = avr($dividend->toArray());
 
-    $indexes = $dom->find('#informations--indexes td .value');
-    $vpc = (float) str_replace(',', '.', $indexes[3]->text);
+    //$indexes = $dom->find('#informations--indexes td .value');
+    //$vpc = (float) str_replace(',', '.', $indexes[3]->text);
 
-    return response()->json(compact('last', 'avr', 'vpc'));
+    return response()->json(compact('last', 'avr'));
 });
