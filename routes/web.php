@@ -76,16 +76,16 @@ $router->get('/{name}', function ($name) {
     $pageDom->loadHTML($searchPage, LIBXML_NOWARNING);
 
     $xpath = new DOMXpath($pageDom);
-    $d = collect($xpath->query('//*[@id="last-revenues--table"]/tbody/tr'));
-    $dividend = $d->map(function ($n){
-        $list = $n->getElementsByTagName('td');
-        return parseCurrency($list->item(4)->nodeValue);
+    $d = collect($xpath->query('//*[@class="flexColumn"]'));
+    $data = json_decode($d[0]->getAttribute('data-options'));
+    $dividend = collect(current($data->data->items))->map(function ($n){
+        return parseCurrency($n->revenue);
     });
 
     $last = $dividend[0];
     $avr = avr($dividend->toArray());
 
-    $indexes = $xpath->query('//*[@id="informations--indexes"]/td')->item(3)->getElementsByTagName('h3')->item(0);
+    $indexes = $xpath->query('//*[@class="indicators__box"]/p/b')->item(3);
     $vpc = parseCurrency($indexes->textContent);
 
     return response()->json(compact('last', 'avr', 'vpc'));
