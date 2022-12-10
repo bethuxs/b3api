@@ -76,10 +76,13 @@ $router->get('/{name}', function ($name) {
     $pageDom->loadHTML($searchPage, LIBXML_NOWARNING);
 
     $xpath = new DOMXpath($pageDom);
-    $d = collect($xpath->query('//*[@class="flexColumn"]'));
-    $data = json_decode($d[0]->getAttribute('data-options'));
-    $dividend = collect(current($data->data->items))->map(function ($n){
-        return parseCurrency($n->revenue);
+    $d = collect($xpath->query('//*[@class="yieldChart__table__body"]//*[@class="yieldChart__table__bloco"]'));
+    $dividend = $d->map(function($e){
+        $doc = new DOMDocument();
+        $doc->loadXML($e->ownerDocument->saveXML($e));
+        $xpath = new DOMXpath($doc);
+
+        return parseCurrency($xpath->query('//*[@class="table__linha"]')->item(4)->textContent);
     });
 
     $last = $dividend[0];
