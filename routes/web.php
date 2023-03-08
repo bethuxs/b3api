@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Support\Facades\Route;
 use PHPHtmlParser\Dom;
 use GuzzleHttp\Client;
@@ -16,11 +15,10 @@ use GuzzleHttp\Client;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    $binance = new \App\Binance();
+    $data = $binance->rates();
+    return view('rates', $data);
 });
-
-
-
 
 /** @var \Laravel\Lumen\Routing\Router $router */
 
@@ -64,9 +62,6 @@ function parseCurrency($text)
     return (float) str_replace(['R$', ' ', ','], ['', '', '.'], $text);
 }
 
-$router->get('/', function () use ($router) {
-    return 'ok';
-});
 
 $router->get('/{name}', function ($name) {
     $body = getData($name);
