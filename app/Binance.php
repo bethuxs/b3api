@@ -29,7 +29,7 @@ class Binance
         $this->client = new Client(['verify' => false, 'headers' => $this->headers]);
     }
 
-    public function exchange($asset, $fiat, $tradeType)
+    public function exchange($asset, $fiat, $tradeType, $amount = 100)
     {
         try {
             $options = [
@@ -37,7 +37,7 @@ class Binance
                     'asset' => $asset,
                     'tradeType' => $tradeType,
                     'fiat' => $fiat,
-                    'transAmount' => 100,
+                    'transAmount' => $amount,
                     'order' => '',
                     'page' => 1,
                     'rows' => 10,
@@ -58,6 +58,9 @@ class Binance
                 $prices[] = $value->adv->price;
                 array_push($result, $details);
             }
+            if(count($prices) == 0) {
+                dd($data);
+            }
             return (float) round(array_sum($prices) / count($prices), 2);
         } catch (RequestException $e) {
             $response = json_decode($e->getResponse()->getBody());
@@ -74,10 +77,12 @@ class Binance
         return \Cache::remember('binance.rate', 3600, function() {
             $brl = $this->exchange('USDT', 'BRL', 'buy');
             $ves = $this->exchange('USDT', 'VES', 'sell');
+            $ars = $this->exchange('USDT', 'ARS', 'buy', 20000);
             $rate = round($ves / $brl, 2);
+            $rateAR = round($ves / $ars, 2);
             $rateSale = round(0.95 * $rate, 2);
             $rateBuy = round(1.11 * $rate, 2);
-            return compact('brl', 'ves', 'rate', 'rateSale', 'rateBuy');
+            return compact('brl', 'ves', 'rate', 'ars', 'rateAR',  'rateSale', 'rateBuy');
         });
     }
 }

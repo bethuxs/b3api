@@ -54,6 +54,33 @@
             </div>
         </div>
 
+        <h1 class="text-center m-3">Tasa Bolivares Pesos Argetinos</h1>
+        <div class="row justify-content-around">
+            <div class="col-md-3 col-sm-6">
+                <div class="pricingTable10">
+                    <div class="pricingTable-header">
+                        <h3 class="heading">A Bolivares</h3>
+                        <span class="price-value">
+                            {{$rateAR * 0.9}}
+                            <span class="month">Bs/$</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6">
+                <div class="pricingTable10">
+                    <div class="pricingTable-header">
+                        <h3 class="heading">A Pesos</h3>
+                        <span class="price-value">
+                            {{$rateAR * 1.2}}
+                            <span class="month">$/Bs</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <h1 class="text-center m-4">Tasa Dolar - Bolivares</h1>
          <div class="row justify-content-around">
             <div class="col-md-3 col-sm-6">
