@@ -20,6 +20,17 @@ Route::get('/', function () {
     return view('rates', $data);
 });
 
+Route::get('/t', function () {
+    $dom = new Dom;
+    $values = $dom->loadFromUrl('https://monitordolarvenezuela.com/')->find('h4.title-prome');
+    $data = [];
+    foreach ($values as $node) {
+        $data[] = $node->text;
+    }
+    dd($data);
+});
+
+
 /** @var \Laravel\Lumen\Routing\Router $router */
 
 /*
