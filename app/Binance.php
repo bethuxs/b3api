@@ -78,11 +78,13 @@ class Binance
             $brl = $this->exchange('USDT', 'BRL', 'buy');
             $ves = $this->exchange('USDT', 'VES', 'sell');
             $ars = $this->exchange('USDT', 'ARS', 'buy', 20000);
+            $clp = $this->exchange('USDT', 'CLP', 'buy', 90000);
             $rate = round($ves / $brl, 2);
             $rateAR = round($ves / $ars, 2);
+            $rateCL  = round($ves / $clp, 2);
             $rateSale = round(0.95 * $rate, 2);
             $rateBuy = round(1.11 * $rate, 2);
-            return compact('brl', 'ves', 'rate', 'ars', 'rateAR',  'rateSale', 'rateBuy');
+            return compact('brl', 'ves', 'rate', 'ars', 'rateAR',  'rateSale', 'rateBuy', 'rateCL');
         });
     }
 }
