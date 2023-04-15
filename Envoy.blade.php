@@ -79,7 +79,6 @@
     echo "Moving for deploying dir {{$dir}}"
     cd {{$dir}}
     php artisan cache:clear file
-    php artisan cache:clear redis
     php artisan view:clear
 @endtask
 
