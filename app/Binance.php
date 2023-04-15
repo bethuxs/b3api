@@ -75,10 +75,10 @@ class Binance
     function rates()
     {
         return \Cache::remember('binance.rate', 3600, function() {
-            $brl = $this->exchange('USDT', 'BRL', 'buy');
+            $brl = $this->exchange('USDT', 'BRL', 'buy', 1000);
             $ves = $this->exchange('USDT', 'VES', 'sell', 5000);
-            $ars = $this->exchange('USDT', 'ARS', 'buy', 20000);
-            $clp = $this->exchange('USDT', 'CLP', 'buy', 90000);
+            $ars = $this->exchange('USDT', 'ARS', 'buy', 25000);
+            $clp = $this->exchange('USDT', 'CLP', 'buy', 95000);
             $rate = round($ves / $brl, 2);
             $rateAR = round($ves / $ars, 2);
             $rateCL  = round($ves / $clp, 2);
