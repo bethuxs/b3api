@@ -1,6 +1,6 @@
 <?php
 use Illuminate\Support\Facades\Route;
-use PHPHtmlParser\Dom;
+
 use GuzzleHttp\Client;
 
 /*
@@ -14,21 +14,8 @@ use GuzzleHttp\Client;
 |
 */
 
-Route::get('/', function () {
-    $binance = new \App\Binance();
-    $data = $binance->rates();
-    return view('rates', $data);
-});
-
-Route::get('/t', function () {
-    $dom = new Dom;
-    $values = $dom->loadFromUrl('https://monitordolarvenezuela.com/')->find('h4.title-prome');
-    $data = [];
-    foreach ($values as $node) {
-        $data[] = $node->text;
-    }
-    dd($data);
-});
+Route::get('/', '\App\Http\Controllers\Rates@home');
+Route::get('/img/{name}', '\App\Http\Controllers\Rates@image');
 
 
 /** @var \Laravel\Lumen\Routing\Router $router */

@@ -29,6 +29,52 @@ class Binance
         $this->client = new Client(['verify' => false, 'headers' => $this->headers]);
     }
 
+    public static function mean(array $array)
+    {
+        $n = count($array); // Obtiene el número de elementos en el array
+        if ($n == 0) {
+            return 0; // Si no hay elementos, retorna 0
+        }
+
+        // Calcula la media (promedio) de los valores en el array
+        return (float) array_sum($array) / $n;
+    }
+
+    static function desviacionEstandar(array $array) {
+        $media = static::mean($array); // Utiliza la función de media proporcionada en la respuesta anterior
+        if ($media == 0) {
+            return 0; // Si la media es 0, retorna 0
+        }
+        $n = count($array); // Obtiene el número de elementos en el array
+
+        // Inicializa la suma de las diferencias al cuadrado
+        $sumaDiferenciasCuadradas = 0;
+
+        // Itera sobre cada valor del array, calcula la diferencia al cuadrado y acumula en la suma
+        foreach ($array as $valor) {
+            $diferencia = $valor - $media;
+            $sumaDiferenciasCuadradas += pow($diferencia, 2);
+        }
+
+        // Calcula la media de las diferencias al cuadrado
+        $mediaDiferenciasCuadradas = $sumaDiferenciasCuadradas / $n;
+
+        // Calcula y retorna la raíz cuadrada de la media de las diferencias al cuadrado (desviación estándar)
+        return sqrt($mediaDiferenciasCuadradas);
+    }
+
+    static function esValorAtipico($valor, array $array) {
+        // Calcula la media y la desviación estándar
+        $media = static::mean($array);
+        $desviacionEstandar = static::desviacionEstandar($array); // Utiliza la función de desviación estándar proporcionada en la respuesta anterior
+        $dLimite = 0.5*$desviacionEstandar;
+        // Calcula los límites
+        $limiteInferior = $media - $dLimite;
+        $limiteSuperior = $media + $dLimite;
+        // Determina si el valor es atípico
+        return $valor < $limiteInferior || $valor > $limiteSuperior;
+    }
+
     public function exchange($asset, $fiat, $tradeType, $amount = 100)
     {
         try {
@@ -55,13 +101,18 @@ class Binance
                     'dynamicMaxSingleTransAmount' => $value->adv->dynamicMaxSingleTransAmount, // max trans amount limit
                     'nickName' => $value->advertiser->nickName,
                 );
-                $prices[] = $value->adv->price;
-                array_push($result, $details);
+                $prices[] = (float) $value->adv->price;
+                $result[] = $details;
             }
             if(count($prices) == 0) {
                 dd($data);
             }
-            return (float) round(array_sum($prices) / count($prices), 2);
+
+            $all = array_filter($prices, function($price) use ($prices) {
+                return !static::esValorAtipico($price, $prices);
+            });
+
+            return static::mean($all);
         } catch (RequestException $e) {
             $response = json_decode($e->getResponse()->getBody());
             $this->logger->error($e->getResponse()->getBody());
@@ -74,17 +125,30 @@ class Binance
 
     function rates()
     {
-        return \Cache::remember('binance.rate', 3600, function() {
-            $brl = $this->exchange('USDT', 'BRL', 'buy', 1000);
-            $ves = $this->exchange('USDT', 'VES', 'sell', 5000);
-            $ars = $this->exchange('USDT', 'ARS', 'buy', 25000);
-            $clp = $this->exchange('USDT', 'CLP', 'buy', 95000);
-            $rate = round($ves / $brl, 2);
-            $rateAR = round($ves / $ars, 2);
-            $rateCL  = round($ves / $clp, 2);
-            $rateSale = round(0.95 * $rate, 2);
-            $rateBuy = round(1.11 * $rate, 2);
-            return compact('brl', 'ves', 'rate', 'ars', 'rateAR',  'rateSale', 'rateBuy', 'rateCL');
+        $currencies = \App\Models\Currency::all();
+        $info = $currencies->mapWithKeys(function($currency) {
+            $key = strtolower($currency->code);
+            $type = $currency->code != 'VES' ? 'buy' : 'sell';
+            $rate = new \App\Models\Rate();
+            $rate->currency_id = $currency->id;
+            $rate->rate = $this->exchange('USDT', $currency->code, $type, $currency->mean);
+            $rate->save();
+            return [
+                $key => (object)[
+                    'rate' => $rate->rate,
+                    'buy' => $currency->buy,
+                    'sell' => $currency->sell,
+                    'emoticon' => $currency->emoticon,
+                    'decimal' => $currency->decimal,
+                    'name' => $currency->name,
+                ]
+            ];
+        });
+
+        $ves = $info->pull('ves');
+        return $info->map(function($item, $key) use ($ves) {
+            $item->rate = $ves->rate / $item->rate;
+            return $item;
         });
     }
 }
