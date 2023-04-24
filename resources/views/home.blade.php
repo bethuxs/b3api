@@ -17,7 +17,7 @@
           <option value="{{$currency}}" data-mult="{{round($r->rate*$r->sell, $r->decimal)}}">{{$r->emoticon}} {{$r->name}}</option>
           @endforeach
         </select>
-        <label class="input-group-text">Recibo&nbsp;<span id="toBs">0</span>&nbsp;Bs</label>
+        <label class="input-group-text col-12 col-sm-3">Recibo&nbsp;<span id="toBs">0</span>&nbsp;Bs</label>
       </div>
 
       <h1 class="text-center mt-4">Tasa de Cambio</h1>
