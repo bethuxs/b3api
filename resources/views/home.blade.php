@@ -9,7 +9,7 @@
   <body>
     <div class="container">
       <h1 class="text-center mt-4">Calculadora Para Bolivares</h1>
-      <div class="input-group m-3">
+      <div class="input-group my-3">
         <label class="input-group-text">Tengo</label>
         <input type="number" class="form-control" placeholder="Cantidad" id="inputAmount" />
         <select class="form-control" id="selectCurrency">
