@@ -9,7 +9,7 @@ class Paralelo
     static function rates()
     {
         $dom = new Dom;
-        $values = $dom->loadFromUrl('https://monitordolarvenezuela.com/')->find('.cont-princ .col-lg-2');
+        $values = $dom->loadFromUrl('https://monitordolarvenezuela.com/')->find('#promedios .col-span-1');
         $data = [];
         foreach ($values as $node) {
             try {
@@ -18,7 +18,7 @@ class Paralelo
                 $img = null;
             }
             $data[] = [
-                'name' => $node->find('.title-prome')->text,
+                'name' => $node->find('h3')->text,
                 'value' => str_replace(['Bs = '], '', $node->find('p')->text),
                 'img' => str_replace('/img/', '', $img),
             ];
