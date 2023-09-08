@@ -123,6 +123,28 @@ class Binance
         }
     }
 
+    function spotBRL()
+    {
+        // Crea un cliente GuzzleHttp
+        $client = new Client([
+            'headers' => [
+                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:96.0) Gecko/20100101 Firefox/96.0',
+            ]
+        ]);
+
+        // Llama a la API de Binance
+        $response = $client->get('https://api.binance.com/api/v3/ticker/price?symbol=USDTBRL');
+
+        // Verifica la respuesta
+        if ($response->getStatusCode() == 200) {
+            // La respuesta es exitosa
+            $body = json_decode($response->getBody(), true);
+           return $body['price'];
+        } else {
+            return null;
+        }
+    }
+
     function rates()
     {
         $currencies = \App\Models\Currency::all();
@@ -146,6 +168,9 @@ class Binance
         });
 
         $ves = $info->pull('ves');
+        $infoBRL = $info->pull('brl');
+        $info->rate = $this->spotBRL();
+        $info->put('brl', $infoBRL);
         return $info->map(function($item, $key) use ($ves) {
             $item->rate = $ves->rate / $item->rate;
             return $item;

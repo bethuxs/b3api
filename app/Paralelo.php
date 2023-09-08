@@ -8,31 +8,28 @@ class Paralelo
 {
     static function rates()
     {
-        $dom = new Dom;
-        $values = $dom->loadFromUrl('https://monitordolarvenezuela.com/')->find('#promedios .col-span-1');
-        $data = [];
-        foreach ($values as $node) {
-            try {
-                $img = $node->find('img')->getAttribute('src');
-            } catch (\PHPHtmlParser\Exceptions\EmptyCollectionException $e) {
-                $img = null;
-            }
-            $data[] = [
-                'name' => $node->find('h3')->text,
-                'value' => str_replace(['Bs = '], '', $node->find('p')->text),
-                'img' => str_replace('/img/', '', $img),
-            ];
-        }
-        $data = array_map(function ($item) {
-            $item['value'] = str_replace(['.', ','], ['', '.'], $item['value']);
-            $item['value'] = floatval($item['value']);
-            return $item;
-        }, $data);
+        // Crear un cliente Guzzle
+        $client = new Client([
+            'headers' => [
+                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:96.0) Gecko/20100101 Firefox/96.0',
+                'Referer' => 'https://monitordolarvenezuela.com',
+            ]
+        ]);
+        $url = 'https://api.monitordolarvenezuela.com/dolarhoy';
+        $response = $client->get($url);
 
-        $data = array_filter($data, function ($item) {
-            return $item['value'] > 0;
-        });
-        return $data;
+        // Comprobar si la descarga fue exitosa
+        if ($response->getStatusCode() != 200) {
+            abort(404);
+        }
+        $json = json_decode($response->getBody()->getContents());
+        if(empty($json->result[0])) {
+            return null;
+        }
+        $result = (array) $json->result[0];
+        return array_filter($result, function($v, $k) {
+            return in_array($k, ['bcv', 'binance', 'prom_epv']);
+        }, ARRAY_FILTER_USE_BOTH);
     }
 
     static function getImage($name)

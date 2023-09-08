@@ -41,13 +41,13 @@
      </table>
 
      <h1 class="text-center my-3">Referencias</h1>
-     <main class="row">
-      @foreach($paralelo as $item)
+     <main class="row justify-content-evenly">
+      @foreach($paralelo as $name => $value)
       <article class="col-sm-3 col-lg-2 text-center">
-          <h5>{{$item['name']}}</h5>
-          <img src="/img/{{$item['img']}}" width="100" height="100" />
+          <h5>{{$name}}</h5>
+          <img src="/img/{{$name}}.webp" width="100" height="100" />
           <br />
-          Bs. {{number_format($item['value'], 2, ',')}}
+          Bs. {{number_format((float)$value, 2, ',')}}
       </article>
       @endforeach
     </main>

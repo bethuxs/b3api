@@ -15,7 +15,9 @@ class Rates extends Controller
 
         $currencies = \App\Models\Currency::where('code', '<>', 'VES')->get();
 
-        $paralelo = \App\Paralelo::rates();
+        $paralelo = \Cache::remember('paralelo', 3600, function() {
+            return \App\Paralelo::rates();
+        });
         return view('home', ['rates' => $data, 'paralelo' => $paralelo, 'currencies' => $currencies]);
     }
 
