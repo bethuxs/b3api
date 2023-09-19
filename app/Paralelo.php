@@ -16,7 +16,11 @@ class Paralelo
             ]
         ]);
         $url = 'https://api.monitordolarvenezuela.com/dolarhoy';
-        $response = $client->get($url);
+        try{
+            $response = $client->get($url);
+        } catch(\Exception $e) {
+            return [];
+        }
 
         // Comprobar si la descarga fue exitosa
         if ($response->getStatusCode() != 200) {
