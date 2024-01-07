@@ -1,3 +1,6 @@
+@php
+$rateUSD = $paralelo['prom_epv'] ?? 0;
+@endphp
 <!DOCTYPE html>
 <html>
   <head>
@@ -20,21 +23,38 @@
         <label class="input-group-text col-12 col-sm-3">Recibo&nbsp;<span id="toBs">0</span>&nbsp;Bs</label>
       </div>
 
+      <div class="input-group my-3">
+        <label class="input-group-text">Para Recibir</label>
+        <input type="number" class="form-control" placeholder="a Recibir" id="inputWant" />
+        <select class="form-control" id="inputCurrency">
+          <option value="1">USD 🇺🇸</option>
+          <option value="-1">Bs 🇻🇪</option>
+        </select>
+        <label class="input-group-text col-12 col-sm-3">
+          Equivale a &nbsp;<span id="outputAmount">0</span>&nbsp;<output id="outputCurrecny">Bs</output>
+        </label>
+      </div>
+
       <h1 class="text-center mt-4">Tasa de Cambio</h1>
       <table class="table">
        <thead>
          <tr>
-           <th scope="col">Moneda</th>
-           <th scope="col">Venta</th>
-           <th scope="col">Compra</th>
+          <th scope="col">Moneda</th>
+          <th scope="col">Venta</th>
+          <th scope="col">Compra</th>
+          <th scope="col">Enviaria</th>
          </tr>
         </thead>
         <tbody>
           @foreach($rates as $currency => $r)
           <tr>
+            @php
+            $rate= round($r->rate*$r->sell, $r->decimal);
+            @endphp
             <td style="font-size: 20px">{{$r->emoticon}} {{$r->name}}</td>
-            <td>{{round($r->rate*$r->sell, $r->decimal)}}</td>
+            <td data-rate>{{$rate}}</td>
             <td>{{round($r->rate*$r->buy, $r->decimal)}}</td>
+            <th>-</th>
           </tr>
           @endforeach
         </tbody>
@@ -51,7 +71,7 @@
       </article>
       @endforeach
     </main>
-  </thead>
+
   <script type="text/javascript">
 
     function formatCurrency(number, decimals, locale) {
@@ -62,19 +82,48 @@
           minimumFractionDigits: decimals,
           maximumFractionDigits: decimals
       });
-  }
+    }
 
     document.addEventListener('DOMContentLoaded', function() {
       const input = document.querySelector('#inputAmount');
       const select = document.querySelector('#selectCurrency');
       const toBs = document.querySelector('#toBs');
+      // second form
+      const inputWant = document.querySelector('#inputWant');
+      const inputCurrency = document.querySelector('#inputCurrency');
+      const outputCurrecny = document.querySelector('#outputCurrecny');
+      const outputAmount = document.querySelector('#outputAmount');
+
       const calc = function() {
         const mult = parseFloat(select.options[select.selectedIndex].dataset.mult);
         toBs.innerHTML = formatCurrency(input.value * mult,  2, 'es-ES', 'VES');
       }
+
+      const eq = function() {
+        const want = parseFloat(inputWant.value);
+        const currency = parseInt(inputCurrency.value);
+        const rateUSD = Math.pow({{$rateUSD}}, currency);
+        const result = want * rateUSD;
+        const bs = currency == -1 ? want : result;
+
+        outputAmount.textContent = formatCurrency(result,  2, 'es-ES', 'USD');
+        outputCurrecny.textContent = currency == 1 ? 'Bs' : 'USD';
+        
+
+        const dataRates = document.querySelectorAll('[data-rate]');
+        dataRates.forEach(function (el) {
+          const rate = parseFloat(el.textContent);
+          const result = bs / rate;
+          el.nextElementSibling.nextElementSibling.textContent = formatCurrency(result,  2, 'es-ES', 'USD');
+        });
+      }
+
       input.addEventListener('keyup', calc);
       input.addEventListener('change', calc);
       select.addEventListener('change', calc);
+
+      inputWant.addEventListener('input', eq);
+      inputCurrency.addEventListener('change', eq);
       calc();
     });
   </script>
