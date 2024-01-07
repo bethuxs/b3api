@@ -31,7 +31,7 @@ Route::get('/img/{name}', '\App\Http\Controllers\Rates@image');
 |
 */
 
-function avr(array $data)
+/*function avr(array $data)
 {
     asort($data);
     array_pop($data);
@@ -60,7 +60,7 @@ function parseCurrency($text)
     return (float) str_replace(['R$', ' ', ','], ['', '', '.'], $text);
 }
 
-
+*/
 $router->get('/{name}', function ($name) {
     $body = getData($name);
     $pageDom = new DomDocument();
