@@ -12,7 +12,7 @@ class Paralelo
         $client = new Client([
             'headers' => [
                 'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:96.0) Gecko/20100101 Firefox/96.0',
-                'Referer' => 'https://monitordolarvenezuela.com',
+                'Origin' => 'https://monitordolarvenezuela.com',
             ]
         ]);
         $url = 'https://api.monitordolarvenezuela.com/dolarhoy';
