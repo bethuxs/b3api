@@ -15,7 +15,6 @@ use GuzzleHttp\Client;
 */
 
 Route::get('/', '\App\Http\Controllers\Rates@home');
-Route::get('/img/{name}', '\App\Http\Controllers\Rates@image');
 
 
 /** @var \Laravel\Lumen\Routing\Router $router */

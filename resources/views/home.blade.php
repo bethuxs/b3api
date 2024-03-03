@@ -11,6 +11,19 @@ $rateUSD = $paralelo['prom_epv'] ?? 0;
   </head>
   <body>
     <div class="container">
+      @if(!empty($paralelo))
+      <main class="row justify-content-evenly">
+        @foreach($paralelo as $name => $value)
+        <article class="col-sm-3 col-lg-2 text-center">
+            <h5>{{$name}}</h5>
+            <img src="/img/{{Str::slug($name)}}.webp" width="100" height="100" />
+            <br />
+            Bs. {{number_format((float)$value, 2, ',')}}
+        </article>
+        @endforeach
+      </main>
+      @endif
+
       <h1 class="text-center mt-4">Calculadora Para Bolivares</h1>
       <div class="input-group my-3">
         <label class="input-group-text">Tengo</label>
@@ -60,17 +73,6 @@ $rateUSD = $paralelo['prom_epv'] ?? 0;
         </tbody>
      </table>
 
-     <h1 class="text-center my-3">Referencias</h1>
-     <main class="row justify-content-evenly">
-      @foreach($paralelo as $name => $value)
-      <article class="col-sm-3 col-lg-2 text-center">
-          <h5>{{$name}}</h5>
-          <img src="/img/{{$name}}.webp" width="100" height="100" />
-          <br />
-          Bs. {{number_format((float)$value, 2, ',')}}
-      </article>
-      @endforeach
-    </main>
 
   <script type="text/javascript">
 

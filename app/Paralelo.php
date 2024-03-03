@@ -6,6 +6,12 @@ use PHPHtmlParser\Dom;
 
 class Paralelo
 {
+    const KEYS = [
+        'bcv' => 'BCV',
+        'binance' => 'Binance',
+        'prom_epv' => 'En Paralelo'
+    ];
+
     static function rates()
     {
         // Crear un cliente Guzzle
@@ -31,28 +37,13 @@ class Paralelo
             return null;
         }
         $result = (array) $json->result[0];
-        return array_filter($result, function($v, $k) {
-            return in_array($k, ['bcv', 'binance', 'prom_epv']);
-        }, ARRAY_FILTER_USE_BOTH);
-    }
 
-    static function getImage($name)
-    {
-        return \Cache::remember("img.paralelo.{$name}", 3600*500, function()  use ($name) {
-            // Crear un cliente Guzzle
-            $client = new Client();
-
-            // URL del archivo que deseas descargar
-            $url = "https://monitordolarvenezuela.com/img/{$name}";
-            // Ruta donde se guardará el archivo descargado
-            $destinationPath = storage_path("app/$name");
-            // Realizar la solicitud y guardar el archivo
-            $response = $client->get($url, ['sink' => $destinationPath]);
-            // Comprobar si la descarga fue exitosa
-            if ($response->getStatusCode() != 200) {
-                abort(404);
+        $r = [];
+        foreach($result as $k => $v) {
+            if(in_array($k, array_keys(static::KEYS))) {
+                $r[static::KEYS[$k]] = $v;
             }
-            return $destinationPath;
-        });
+        }
+        return $r;
     }
 }
