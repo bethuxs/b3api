@@ -18,7 +18,7 @@ $rateUSD = $paralelo['prom_epv'] ?? 0;
             <h5>{{$name}}</h5>
             <img src="/img/{{Str::slug($name)}}.webp" width="100" height="100" />
             <br />
-            Bs. {{number_format((float)$value, 2, ',')}}
+            Bs. {{money($value)}}
         </article>
         @endforeach
       </main>
@@ -65,8 +65,8 @@ $rateUSD = $paralelo['prom_epv'] ?? 0;
             $rate= round($r->rate*$r->sell, $r->decimal);
             @endphp
             <td style="font-size: 20px">{{$r->emoticon}} {{$r->name}}</td>
-            <td data-rate>{{$rate}}</td>
-            <td>{{round($r->rate*$r->buy, $r->decimal)}}</td>
+            <td data-rate>{{money($rate, $r->decimal)}}</td>
+            <td>{{money($r->rate*$r->buy, $r->decimal)}}</td>
             <th>-</th>
           </tr>
           @endforeach
