@@ -1,5 +1,5 @@
 @php
-$rateUSD = $paralelo['prom_epv'] ?? 0;
+$rateUSD = $paralelo['En Paralelo'] ?? 0;
 @endphp
 <!DOCTYPE html>
 <html>
@@ -65,7 +65,7 @@ $rateUSD = $paralelo['prom_epv'] ?? 0;
             $rate= round($r->rate*$r->sell, $r->decimal);
             @endphp
             <td style="font-size: 20px">{{$r->emoticon}} {{$r->name}}</td>
-            <td data-rate>{{money($rate, $r->decimal)}}</td>
+            <td data-rate="{{$rate}}">{{money($rate, $r->decimal)}}</td>
             <td>{{money($r->rate*$r->buy, $r->decimal)}}</td>
             <th>-</th>
           </tr>
@@ -110,11 +110,9 @@ $rateUSD = $paralelo['prom_epv'] ?? 0;
 
         outputAmount.textContent = formatCurrency(result,  2, 'es-ES', 'USD');
         outputCurrecny.textContent = currency == 1 ? 'Bs' : 'USD';
-        
-
         const dataRates = document.querySelectorAll('[data-rate]');
         dataRates.forEach(function (el) {
-          const rate = parseFloat(el.textContent);
+          const rate = parseFloat(el.dataset.rate);
           const result = bs / rate;
           el.nextElementSibling.nextElementSibling.textContent = formatCurrency(result,  2, 'es-ES', 'USD');
         });
