@@ -8,13 +8,9 @@ class Rates extends Controller
 {
     function home()
     {
-        $data = \Cache::remember('rates', 3600, function() {
-            $binance = new \App\Binance();
-            return $binance->rates();
-        });
-
+        $binance = new \App\Binance();
+        $data = $binance->rates();
         $currencies = \App\Models\Currency::where('code', '<>', 'VES')->get();
-
         $paralelo = \Cache::remember('paralelo', 3600, function() {
             return \App\Paralelo::rates();
         });

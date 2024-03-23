@@ -153,8 +153,9 @@ class Binance
             $type = $currency->code != 'VES' ? 'buy' : 'sell';
             $rate = new \App\Models\Rate();
             $rate->currency_id = $currency->id;
-            $rate->rate = $this->exchange('USDT', $currency->code, $type, $currency->mean);
-            $rate->save();
+            $rate->rate = \Cache::remember("rates.{$currency->code}", 3600, function() use ($currency, $type) {
+                return $this->exchange('USDT', $currency->code, $type, $currency->mean);
+            });
             return [
                 $key => (object)[
                     'rate' => $rate->rate,
