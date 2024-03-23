@@ -18,12 +18,14 @@ class Financial extends Controller
             'spread' => 'required|array',
             'spread.*.buy' => 'required|numeric',
             'spread.*.sell' => 'required|numeric',
+            'spread.*.mean' => 'required|numeric',
         ]);
 
         foreach ($request->spread as $currency => $data) {
             $currency = \App\Models\Currency::find($currency);
             $currency->sell = $data['sell'];
             $currency->buy = $data['buy'];
+            $currency->mean = $data['mean'];
             $currency->save();
         }
         flash(__('Spread updated!'), 'success');

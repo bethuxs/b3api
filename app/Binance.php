@@ -151,11 +151,13 @@ class Binance
         $info = $currencies->mapWithKeys(function($currency) {
             $key = strtolower($currency->code);
             $type = $currency->code != 'VES' ? 'buy' : 'sell';
+            // para el historial
             $rate = new \App\Models\Rate();
             $rate->currency_id = $currency->id;
             $rate->rate = \Cache::remember("rates.{$currency->code}", 3600, function() use ($currency, $type) {
                 return $this->exchange('USDT', $currency->code, $type, $currency->mean);
             });
+            $rate->save();
             return [
                 $key => (object)[
                     'rate' => $rate->rate,
