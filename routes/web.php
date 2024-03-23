@@ -60,7 +60,7 @@ function parseCurrency($text)
 }
 
 */
-$router->get('/{name}', function ($name) {
+$router->get('data/{name}', function ($name) {
     $body = getData($name);
     $pageDom = new DomDocument();
     $searchPage = mb_convert_encoding($body, 'HTML-ENTITIES', "UTF-8");
@@ -85,3 +85,9 @@ $router->get('/{name}', function ($name) {
 
     return response()->json(compact('last', 'avr', 'vpc'));
 });
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])
+    ->name('home')
+    ->middleware('auth');
