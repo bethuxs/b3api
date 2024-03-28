@@ -139,7 +139,7 @@ class Binance
         if ($response->getStatusCode() == 200) {
             // La respuesta es exitosa
             $body = json_decode($response->getBody(), true);
-           return $body['price'];
+            return $body['price'];
         } else {
             return null;
         }
@@ -172,7 +172,7 @@ class Binance
 
         $ves = $info->pull('ves');
         $infoBRL = $info->pull('brl');
-        $info->rate = $this->spotBRL();
+        $infoBRL->rate = $this->spotBRL();
         $info->put('brl', $infoBRL);
         return $info->map(function($item, $key) use ($ves) {
             $item->rate = $ves->rate / $item->rate;

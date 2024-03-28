@@ -16,7 +16,7 @@ use GuzzleHttp\Client;
 
 Route::get('/', '\App\Http\Controllers\Rates@home');
 
-Route::prefix('backoffice')->name('financial.')->group(function() {
+Route::prefix('backoffice')->name('financial.')->middleware('auth')->group(function() {
     Route::get('/spread', '\App\Http\Controllers\Financial@spread')->name('spread');
     Route::post('/spread', '\App\Http\Controllers\Financial@spreadPost')->name('spread-post');
 });
