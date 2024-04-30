@@ -21,6 +21,19 @@ Route::prefix('backoffice')->name('financial.')->middleware('auth')->group(funct
     Route::post('/spread', '\App\Http\Controllers\Financial@spreadPost')->name('spread-post');
 });
 
+Route::prefix('app')->name('app.')->middleware('auth')->group(function() {
+    Route::controller(\App\Http\Controllers\Invoices::class)->prefix('invoice')->group(function() {
+        Route::get('/', 'index')->name('index');
+        Route::get('/create', 'create')->name('create');
+        Route::get('/view/{invoice}', 'view')->name('view');
+        Route::post('/store', 'store')->name('store');
+        Route::get('/edit/{id}', 'edit')->name('edit');
+        Route::post('/update/{id}', 'update')->name('update');
+        Route::get('/delete/{id}', 'delete')->name('delete');
+    });
+});
+
+
 
 
 /** @var \Laravel\Lumen\Routing\Router $router */
