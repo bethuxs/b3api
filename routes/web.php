@@ -22,14 +22,25 @@ Route::prefix('backoffice')->name('financial.')->middleware('auth')->group(funct
 });
 
 Route::prefix('app')->name('app.')->middleware('auth')->group(function() {
-    Route::controller(\App\Http\Controllers\Invoices::class)->prefix('invoice')->group(function() {
+    Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])
+        ->name('home')
+        ->middleware('auth');
+
+    Route::controller(\App\Http\Controllers\Invoices::class)
+        ->name('invoices.')
+        ->prefix('invoice')
+        ->group(function() {
         Route::get('/', 'index')->name('index');
-        Route::get('/create', 'create')->name('create');
+        Route::get('/create', 'edit')->name('create');
         Route::get('/view/{invoice}', 'view')->name('view');
-        Route::post('/store', 'store')->name('store');
-        Route::get('/edit/{id}', 'edit')->name('edit');
-        Route::post('/update/{id}', 'update')->name('update');
-        Route::get('/delete/{id}', 'delete')->name('delete');
+        Route::post('/store/{invoice?}', 'store')->name('store');
+        Route::get('/edit/{invoice}', 'edit')->name('edit');
+        Route::get('/delete/{invoice}', 'delete')->name('delete');
+
+        Route::prefix('item')->name('item.')->group(function() {
+            Route::get('/delete/{item}', 'delete')->name('delete');
+            Route::post('/store/{invoice}/{item?}', 'storeItem')->name('store');
+        });
     });
 });
 
@@ -106,7 +117,3 @@ $router->get('data/{name}', function ($name) {
 });
 
 Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])
-    ->name('home')
-    ->middleware('auth');
