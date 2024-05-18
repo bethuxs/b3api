@@ -176,7 +176,7 @@ class Binance
         $info->put('brl', $infoBRL);
         return $info->map(function($item, $key) use ($ves) {
             $den = $item->rate ?? 1;
-            $item->rate = $ves->rate / $den;
+            $item->rate = $den == 0 ? null : $ves->rate / $den;
             return $item;
         });
     }

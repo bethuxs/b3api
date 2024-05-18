@@ -32,7 +32,7 @@ Route::prefix('app')->name('app.')->middleware('auth')->group(function() {
         ->group(function() {
         Route::get('/', 'index')->name('index');
         Route::get('/create', 'edit')->name('create');
-        Route::get('/view/{invoice}', 'view')->name('view');
+        Route::get('/view/{invoice}/{pdf?}', 'view')->name('view');
         Route::post('/store/{invoice?}', 'store')->name('store');
         Route::get('/edit/{invoice}', 'edit')->name('edit');
         Route::get('/delete/{invoice}', 'delete')->name('delete');
