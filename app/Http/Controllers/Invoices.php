@@ -9,7 +9,7 @@ use App\Models\Item;
 
 use Illuminate\Validation\Rule;
 
-    use Barryvdh\DomPDF\Facade\Pdf;
+use Barryvdh\Snappy\Facades\SnappyPdf as Pdf;
 
 class Invoices extends Controller
 {
@@ -22,8 +22,12 @@ class Invoices extends Controller
 
     public function view(Invoice $invoice, $pdf = false)
     {
-        return $pdf ? Pdf::loadView('app.invoices.view', compact('invoice'))->stream()
-            : view('app.invoices.view', compact('invoice'));
+        $pdf = (bool) $pdf;
+        $layout = $pdf ? 'pdf' : 'base';
+        $data = compact('invoice', 'layout');
+
+        return $pdf ? Pdf::loadView('app.invoices.view', $data)->stream()
+            : view('app.invoices.view', $data);
     }
 
     public function edit(Invoice $invoice, Item $item)
