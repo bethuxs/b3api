@@ -33,7 +33,9 @@ class Invoices extends Controller
     public function edit(Invoice $invoice, Item $item)
     {
         $user = auth()->user();
-        $entitys = $user->entitys->pluck('name', 'id');
+        $entitys = $user->entitys()
+            ->select(\DB::raw('CONCAT(name, " ", IFNULL(surname, "")) as name'), 'id')
+            ->pluck('name', 'id');
         $currencies = Currency::all()->pluck('name', 'id');
         return view('app.invoices.form', compact('invoice', 'entitys', 'currencies', 'item'));
     }

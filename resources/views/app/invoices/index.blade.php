@@ -19,7 +19,7 @@
   @foreach ($invoices as $invoice)
     <tr>
       <td>{{ $invoice->number }}</td>
-      <td>{{ $invoice->entity->name }}</td>
+      <td>{{ $invoice->entity->name }} {{ $invoice->entity->surname }}</td>
       <td>{{ $invoice->created_at->format('d/m/Y') }}</td>
       <td>
         <a class="btn btn-info" href="{{ route('app.invoices.view', $invoice) }}">{{ __('View') }}</a>

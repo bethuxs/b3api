@@ -3,6 +3,15 @@
 @section('title', __('Invoices'))
 
 @section('content')
+
+<h1>
+@if($invoice->id)
+    {{ __('Edit Invoice') }} {{$invoice->number}}
+@else
+    {{ __('Create Invoice') }}
+@endif
+</h1>
+
 <x-errors :errors="$errors" />
 
 {!! Html::form('POST', route('app.invoices.store', $invoice))
@@ -10,7 +19,7 @@
     {!! Html::token() !!}
     {!! Html::select('entity_id')
             ->options($entitys)
-            ->placeholder('Selecciona un cliente')
+            ->placeholder(__('Select one...'))
             ->value($invoice->entity_id)
             ->required() !!}
     {!! Html::select('currency_id')
