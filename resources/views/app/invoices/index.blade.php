@@ -3,7 +3,11 @@
 @section('title', __('Invoices'))
 
 @section('content')
-<table class="table">
+<h1>{{ __('Invoices') }}</h1>
+
+<a class="btn btn-primary" href="{{ route('app.invoices.create') }}">{{ __('Create') }}</a>
+
+<table class="table table-striped">
     <thead>
     <tr>
       <th>{{ __('Number') }}</th>
@@ -23,7 +27,8 @@
       </td>
     </tr>
   @endforeach
-
 </table>
+
+  {{ $invoices->links() }}
 
 @endsection
