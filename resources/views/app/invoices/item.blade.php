@@ -1,14 +1,15 @@
-
-    {!! Html::form('POST', route('app.invoices.item.store', [$invoice, $item]))->open() !!}
-        {!! Html::text('name')
-            ->value(old('name', $item->name ?? ''))
-            ->required()
-            ->placeholder(__('Nombre'))
-            ->addClass('form-control' . ($errors->has('name') ? ' is-invalid' : '')) !!}
-        @error('name')
-            <div class="invalid-feedback">{{ $message }}</div>
-        @enderror
-
+{!! Html::form('POST', route('app.invoices.item.store', [$invoice, $item]))->class('row')->open() !!}
+<div class="col-4">
+    {!! Html::text('name')
+        ->value(old('name', $item->name ?? ''))
+        ->required()
+        ->placeholder(__('Nombre'))
+        ->addClass('form-control' . ($errors->has('name') ? ' is-invalid' : '')) !!}
+    @error('name')
+        <div class="invalid-feedback">{{ $message }}</div>
+    @enderror
+</div>
+<div class="col-4">
         {!! Html::textarea('description')
             ->value(old('description', $item->description ?? ''))
             ->required()
@@ -17,6 +18,9 @@
         @error('description')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
+</div>
+
+<div class="col-2">
         {!! Html::input('number', 'quantity')
             ->value(old('quantity', $item->quantity ?? ''))
             ->required()
@@ -25,7 +29,9 @@
         @error('quantity')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
+</div>
 
+<div class="col-2">
         {!! Html::input('number', 'price')
             ->value(old('price', $item->price ?? ''))
             ->required()
@@ -34,14 +40,6 @@
         @error('price')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
+</div>
     {!! Html::submit(__('Guardar'))->class('btn btn-primary') !!}
 {{ html()->form()->close() }}
-
-
-
-
-
-
-
-    
-

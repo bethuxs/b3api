@@ -17,24 +17,45 @@
 {!! Html::form('POST', route('app.invoices.store', $invoice))
 ->open() !!}
     {!! Html::token() !!}
+    <section class="row">
+    <div class="col-3">
+    <label for="entity_id">{{ __('Entity') }}</label>
     {!! Html::select('entity_id')
             ->options($entitys)
             ->placeholder(__('Select one...'))
             ->value($invoice->entity_id)
+            ->class('form-control')
             ->required() !!}
-    {!! Html::select('currency_id')
+    </div>
+
+    <div class="col-3">
+        <label>{{__('Currency')}}</label>
+        {!! Html::select('currency_id')
             ->options($currencies)
+            ->class('form-control')
             ->value($invoice->currency_id)
             ->placeholder(__('Select a currency'))
             ->required() !!}
+    </div>
+
+    <div class="col-3">
+        <label>{{__('Number')}}</label>
     {!! Html::text('number')
+        ->class('form-control')
             ->placeholder('Número')
             ->value($invoice->number)
-
     !!}
-    <!-- Puedes agregar más campos aquí según sea necesario -->
-    {!! Html::submit('Guardar')->class('btn btn-primary') !!}
+
+    </div>
+
+    <div class="col-3">
+           {!! Html::submit(__('Save'))->class('btn btn-primary') !!}
+    </div>
+</section>
 {!! Html::form()->close() !!}
+
+
+
 
 @if($invoice->id)
     {!! Html::form('DELETE', route('app.invoices.delete', $invoice))
@@ -70,7 +91,5 @@
 @if($invoice->exists)
     @include('app.invoices.item', ['item' => $item, 'invoice' => $invoice])
 @endif
-
-
 
 @endsection

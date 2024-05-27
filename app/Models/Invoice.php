@@ -27,6 +27,6 @@ class Invoice extends Model
     public static function generateNumber(User $user)
     {
         $last = static::where('user_id', $user->id)->orderBy('number', 'desc')->first();
-        return $last ? $last->number + 1 : 1;
+        return $last ? intval($last->number) + 1 : 1;
     }
 }
