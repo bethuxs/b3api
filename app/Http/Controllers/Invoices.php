@@ -9,20 +9,21 @@ use App\Models\Item;
 
 use Illuminate\Validation\Rule;
 
-
+    use Barryvdh\DomPDF\Facade\Pdf;
 
 class Invoices extends Controller
 {
     public function index()
     {
         $invoices = Invoice::orderBy('created_at', 'desc')
-            ->paginate(25);
+            ->paginate(20);
         return view('app.invoices.index', compact('invoices'));
     }
 
-    public function view(Invoice $invoice)
+    public function view(Invoice $invoice, $pdf = false)
     {
-        return view('app.invoices.view', compact('invoice'));
+        return $pdf ? Pdf::loadView('app.invoices.view', compact('invoice'))->stream()
+            : view('app.invoices.view', compact('invoice'));
     }
 
     public function edit(Invoice $invoice, Item $item)
