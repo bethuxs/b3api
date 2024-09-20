@@ -12,7 +12,20 @@
 @endif
 </h1>
 
+
+
 <x-errors :errors="$errors" />
+
+
+@if($invoice->id)
+<div class="text-end"> 
+    {!! Html::form('DELETE', route('app.invoices.delete', $invoice))
+    ->open() !!}
+        {!! Html::token() !!}
+        {!! Html::submit(__('Delete Invoice'))->class('btn btn-danger') !!}
+{!! Html::form()->close() !!}
+</div>
+@endif
 
 {!! Html::form('POST', route('app.invoices.store', $invoice))
 ->open() !!}
@@ -57,13 +70,6 @@
 
 
 
-@if($invoice->id)
-    {!! Html::form('DELETE', route('app.invoices.delete', $invoice))
-    ->open() !!}
-        {!! Html::token() !!}
-        {!! Html::submit(__('Delete'))->class('btn btn-danger') !!}
-{!! Html::form()->close() !!}
-@endif
 
 @if($invoice->items->isNotEmpty())
     <table class="table">
