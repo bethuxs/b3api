@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->foreignId('user_id')->constrained();
-            $table->unsignedTinyInteger('expire_day');
+            $table->unsignedTinyInteger('closed_day');
             $table->timestamps();
         });
     }

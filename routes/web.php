@@ -3,6 +3,9 @@ use Illuminate\Support\Facades\Route;
 
 use GuzzleHttp\Client;
 
+include 'app.php';
+
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -20,32 +23,6 @@ Route::prefix('backoffice')->name('financial.')->middleware('auth')->group(funct
     Route::get('/spread', '\App\Http\Controllers\Financial@spread')->name('spread');
     Route::post('/spread', '\App\Http\Controllers\Financial@spreadPost')->name('spread-post');
 });
-
-Route::prefix('app')->name('app.')->middleware('auth')->group(function() {
-    Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])
-        ->name('home')
-        ->middleware('auth');
-
-    Route::controller(\App\Http\Controllers\Invoices::class)
-        ->name('invoices.')
-        ->prefix('invoice')
-        ->group(function() {
-        Route::get('/', 'index')->name('index');
-        Route::get('/create', 'edit')->name('create');
-        Route::get('/view/{invoice}/{pdf?}', 'view')->name('view');
-        Route::post('/store/{invoice?}', 'store')->name('store');
-        Route::get('/edit/{invoice}', 'edit')->name('edit');
-        Route::get('/delete/{invoice}', 'delete')->name('delete');
-
-        Route::prefix('item')->name('item.')->group(function() {
-            Route::get('/delete/{item}', 'delete')->name('delete');
-            Route::post('/store/{invoice}/{item?}', 'storeItem')->name('store');
-        });
-    });
-});
-
-
-
 
 /** @var \Laravel\Lumen\Routing\Router $router */
 
