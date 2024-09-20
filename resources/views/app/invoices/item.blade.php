@@ -1,3 +1,5 @@
+<section class="mt-3">
+    <h4>{{__('Item')}}</h4>
 {!! Html::form('POST', route('app.invoices.item.store', [$invoice, $item]))->class('row')->open() !!}
 <div class="col-4">
     {!! Html::text('name')
@@ -41,5 +43,11 @@
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
 </div>
-    {!! Html::submit(__('Guardar'))->class('btn btn-primary') !!}
+
+   
+
+<div class="text-center mt-3 col-12">
+ {!! Html::submit(__('Save Item'))->class('btn btn-primary mt-3') !!}
+</div>
 {{ html()->form()->close() }}
+</section>
